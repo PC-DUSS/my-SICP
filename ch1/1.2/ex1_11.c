@@ -1,12 +1,18 @@
+/* Compare the performance of a recursive process vs iterative process for
+   implementations of a Fibonacci number function. Can also be used to compare
+   the performance of the two implementations in C with their respective
+   performance in GNU Guile.
+
+   Author: Pierre C. Dussault
+   Date: 2026-10-29
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <stdint.h>
 #include <time.h>
 
-
 #define NUMBER 33
-
 
 uint64_t recursive_f(uint8_t n);
 uint64_t iterative_f(uint8_t n);
@@ -14,33 +20,24 @@ uint64_t iterate(uint8_t count, uint64_t a, uint64_t b, uint64_t c);
 
 
 int main(void) {
-    //struct timeval *t1 = malloc(sizeof(struct timeval));
-    //struct timeval *t2 = malloc(sizeof(struct timeval));
+    clock_t t1, t2;
+    uint64_t recurse_result, iterate_result, recurse_timedelta,
+        iterate_timedelta;
 
-    //gettimeofday(t1, NULL);
-    clock_t t1 = clock();
-    uint64_t recurse_result = recursive_f(NUMBER);
-    //gettimeofday(t2, NULL);
-    clock_t t2 = clock();
-    //suseconds_t recurse_timedelta = t2->tv_usec - t1->tv_usec;
-    long recurse_timedelta = t2 - t1;
-
-    //gettimeofday(t1, NULL);
     t1 = clock();
-    uint64_t iterate_result = iterative_f(NUMBER);
-    //gettimeofday(t2, NULL);
+    recurse_result = recursive_f(NUMBER);
     t2 = clock();
-    //suseconds_t iterate_timedelta = t2->tv_usec - t1->tv_usec;
-    long iterate_timedelta = t2 - t1;
+    recurse_timedelta = t2 - t1;
+
+    t1 = clock();
+    iterate_result = iterative_f(NUMBER);
+    t2 = clock();
+    iterate_timedelta = t2 - t1;
 
     printf("Recursive: f(%d) = %ld Time = %ld microseconds\n",
            NUMBER, recurse_result, recurse_timedelta);
     printf("Iterative: f(%d) = %ld Time = %ld microseconds\n",
            NUMBER, iterate_result, iterate_timedelta);
-
-    /* Free memory */
-    //free(t1);
-    //free(t2);
 
     return 0;
 }

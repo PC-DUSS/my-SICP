@@ -1,69 +1,68 @@
 #!/usr/bin/guile -s
 !#
-(define (exponentiation)
-  (define (exp1 base n)
-    ;; Exponentiation using simple recursion.
-    ;;
-    ;; Requires O(n) time and O(n) space.
+;; A look at the different methods to do exponentiation, and the process that
+;; each method generates.
+;;
+;; Author: Pierre C. Dussault
+;; Date: 2026-10-27
+;;
+;; Code:
+(define (main)
+  ;; Constants
+  (define EXP-BASE 5)
+  (define EXP-PWR 5)
+
+  ;; This should produce a linear recursive process. Time complexity = O(n),
+  ;; space complexity O(n).
+  (define (expt-a b n)
     (if (= n 0)
         1
-        (* base (exp1 base (- n 1)))))
+        (* b (expt-a b (- n 1)))))
 
-  (define (exp2 base n)
-    ;; Exponentation using iteration.
-    ;;
-    ;; Requires O(n) time but only O(1) space (we are summarizing the data that
-    ;; needs to be kept at each instance of the procedure call, rather than
-    ;; forcing the program to keep the state of all previous procedure calls
-    ;; until the base case is reached). Reduces the amount of space required to
-    ;; only the variables that are used to keep the state from start to finish.
-    ;; In this case, 'counter' and 'accumulator'.
-    ;;
-    ;; Tip: in general, iterative techniques in lisp still use recursion, but
-    ;; require passing a counter and an accumulator variable, instead of
-    ;; bubbling up values once a base case has been hit.
-    (define (exp-iter b counter accumulator)
-      (if (= counter 0)
-          accumulator
-          (exp-iter b (- counter 1) (* b accumulator))))
-    (exp-iter base n 1))
+  ;; Just like with factorial, we can produce an iterative process to accomplish
+  ;; the same task. This one requires the same amount of steps
+  ;; (time complexity = O(n)), but only requires constant space
+  ;; (space complexity = O(1)) since it stores the accumulated result in an
+  ;; accumulator variable that is passed on in each new recursive call (the
+  ;; 'product' variable).
+  (define (expt-b b n)
+    (define (expt-iter b n product)
+      (if (= n 0)
+          product
+          (expt-iter b (- n 1) (* b product))))
+    (expt-iter b n 1))
 
-  (define (exp3 base n)
-    ;; Exponentation by squaring.
-    ;;
-    ;; Requires O(log(n)) time and O(log(n)) space. This algorithm cannot really
-    ;; use an accumulator and a counter to reduce the amount of space consumed,
-    ;; but it is much more efficient in the amount of time consumed.
-    (define (sqr x)
-      (* x x))
-    (if (= n 0)
-        1
-        (if (= 0 (remainder n 2))
-            (sqr (exp3 base (/ n 2)))
-            (* base (exp3 base (- n 1))))))
-
-  (define (exp4 b n)
-    ;; TODO Trying to add an accumulator to the exponentiation by squaring
-    ;; method, to reduce the amount of space used to O(1). SEEMS IMPOSSIBLE.
-    ;;
-    ;; REVIEW I don't think this can work, due to the call to 'sqr' taking an
-    ;; invalid accumulator value (the accumulator it takes is the currently
-    ;; accumulated one, rather than the value of accumulator when n was n/2).
-    (define (sqr x) (* x x))
-
-    (define (exp-sqr-iter b counter accumulator)
-      (if (= counter 0)
-          accumulator
-          (if (= (remainder counter 2) 0)
-              (sqr (exp-sqr-iter b (/ counter 2) accumulator))
-              (exp-sqr-iter b (- counter 1) (* b accumulator)))))
-
-    (exp-sqr-iter b n 1))
+  ;; Helper functions 
+  (define (even? x)
+    (if (= (remainder x 2) 0)
+        #t
+        #f))
+  (define (sqr x)
+    (* x x))
   
-  (display (exp1 10 10)) (newline)
-  (display (exp2 10 10)) (newline)
-  (display (exp3 10 10)) (newline)
-  (display (exp4 10 10)) (newline))
+  ;; Here is the successive squaring method. This should produce a logarithmic
+  ;; process. Time complexity = O(log(n)), space complexity = O(log(n)).
+  (define (expt-c b n)
+    (cond ((= n 0) 1)
+          ((even? n) (* (expt-c b (/ n 2)) (expt-c b (/ n 2))))
+          (else (* b (expt-c b (- n 1))))))
+
+  ;; Ex1.16: now for a small challenge, let's try to formulate an iterative process
+  ;; version of the successive squaring method. We'll combine what we did to go
+  ;; from the linear recursive to the linear iterative process version earlier.
+  ;; This new version will have Time complexity = O(log(n)), but
+  ;; Space complexity = O(1).
+  (define (expt-d b n)
+    (define (expt-iter b n product)
+      (cond ((= n 0) product)
+            ((even? n) (expt-iter b (/ n 2) (sqr product)))
+            (else (expt-iter b (- n 1) (* b product)))))
+    (expt-iter b n 1))
+
+  (display (expt-a EXP-BASE EXP-PWR)) (newline)
+  (display (expt-b EXP-BASE EXP-PWR)) (newline)
+  (display (expt-c EXP-BASE EXP-PWR)) (newline)
+  (display (expt-d EXP-BASE EXP-PWR)) (newline))
 
 
-(exponentiation)
+(main)

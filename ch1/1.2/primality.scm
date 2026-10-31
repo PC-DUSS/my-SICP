@@ -7,21 +7,25 @@
 ;;
 ;; Code:
 (define (main)
-  ;; Helper functions
+
   (define (even? x)
     (if (= (remainder x 2) 0) #t #f))
+
   (define (sqr x)
     (* x x))
+
   (define (pow base power)
     (define (pow-iter base power total)
       (cond ((= power 0) total)
             ((even? power) (pow-iter (sqr base) (/ power 2) total))
             (else (pow-iter base (- power 1) (* base total)))))
     (pow-iter base power 1))
+
   (define (expmod base power m)
     (if (= power 0)
         1
         (remainder (pow base power) m)))
+
   ;; One way to test for primality is to successively test for possible integer
   ;; divisors from the bottom up, starting with the number 2 (we don't test for
   ;; divisibility by 1, because that is obvious) up to the dividend (the number
@@ -36,8 +40,10 @@
             ((divides? test-divisor n) test-divisor)
             (else (find-divisor n (+ test-divisor 1)))))
     (find-divisor n 2))
+
   (define (prime? n)
     (= (smallest-divisor n) n))
+
   ;; Now we will take a look at Fermat's Little Theorem:
   ;; <<If 'n' is a prime number and 'a' is any positive integer less than 'n',
   ;; then 'a' raised to the n'th power is congruent to 'a' modulo 'n'.>>
@@ -61,4 +67,3 @@
 
 
 (main)
-

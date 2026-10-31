@@ -7,6 +7,4 @@
                                      (expmod base (/ power 2) mod))) mod)
         (else (remainder (* base (expmod base (- power 1) mod)) mod))))
 
-;; The reason this implementation is much slower is because it forces 'expmod'
-;; to evaluates itself twice each time 'power' is even. This means that it will
-;; grow exponentially.
+;; See explanations in ex1_26_explanation.pdf and ex1_26.dia
