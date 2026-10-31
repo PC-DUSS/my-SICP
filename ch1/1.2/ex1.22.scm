@@ -1,0 +1,87 @@
+#!/usr/bin/guile -s
+!#
+;; Write a procedure 'search-for-primes' that checks the primality of
+;; consecutive odd integers (we can skip even integers because we know by
+;; definition that they are not prime) in a specified range.
+;;
+;; Use the 'get-internal-run-time' procedure from the Guile API to complete this
+;; exercise.
+;;
+;; Author: Pierre C. Dussault
+;; Date: 2026-10-30
+;;
+;; Code:
+(define (main)
+
+  (define (displayln x)
+    (display x) (newline))
+
+  (define (build-list lst elem)
+    (if (eq? lst '())
+        (list elem)
+        (append lst (list elem))))
+
+  (define (square x)
+    (* x x))
+
+  (define (find-divisor dividend test-divisor)
+    (if (> (square test-divisor) dividend)
+        dividend
+        (if (= (remainder dividend test-divisor) 0)
+            test-divisor
+            (find-divisor dividend (+ test-divisor 1)))))
+
+  (define (smallest-divisor n)
+    (find-divisor n 2))
+
+  (define (prime? n)
+    (= (smallest-divisor n) n))
+
+  (define (report-prime elapsed-time)
+    (display " *** ")
+    (display elapsed-time))
+
+  (define (start-prime-test n start-time)
+    (if (prime? n)
+        (report-prime (- (get-internal-run-time) start-time))
+        #f))
+
+  (define (timed-prime-test n)
+    (newline)
+    (display n)
+    (start-prime-test n (get-internal-run-time)))
+
+  (define (search-primes-iter current end primes maxprimes)
+    (define (showprimes)
+      (newline) (newline) (displayln "List of primes found:")
+      (for-each displayln primes))
+    (cond ((and (> maxprimes 0) (= (length primes) maxprimes)) (showprimes))
+          ((< current end)
+            (if (timed-prime-test current)
+                (search-primes-iter (+ current 1)
+                                    end
+                                    (build-list primes current)
+                                    maxprimes)
+                (search-primes-iter (+ current 1)
+                                    end
+                                    primes
+                                    maxprimes)))
+          (else (showprimes))))
+
+  (define (search-for-primes range-start range-end)
+    (search-primes-iter range-start range-end '() 0))
+
+  (define (search-for-first-three-primes range-start range-end)
+    (search-primes-iter range-start range-end '() 3))
+
+  (search-for-first-three-primes 1001 10000)
+  (search-for-first-three-primes 10001 100000)
+  (search-for-first-three-primes 100001 1000000)
+  (search-for-first-three-primes 1000001 1002000)
+  ;;(search-for-primes 1001 10000)
+  ;;(search-for-primes 10001 100000)
+  ;;(search-for-primes 100001 1000000)
+  )
+
+
+(main)
