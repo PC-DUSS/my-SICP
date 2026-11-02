@@ -53,8 +53,10 @@
 
 
 (define (mrt-iter a n)
-  ;; Change the first test condition to (> a (/ n 4)) after you get it
-  ;; working as is.
+  ;; The line below is more efficient while also being accurate at only
+  ;; detecting true primes, however SICP does not ask for this method so we
+  ;; leave it commented.
+  ;;
   ;;(cond ((> a (/ n 4)) #t)
   (cond ((> a (- n 1)) #t)
         ((= (expmod a (- n 1) n) 1) (mrt-iter (+ a 1) n))
