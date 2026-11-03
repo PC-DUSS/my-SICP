@@ -1,6 +1,6 @@
 #!/usr/bin/guile -s
 !#
-;; Use the sum procedure, and you experience building the initial integral
+;; Use the sum procedure, and your experience building the initial integral
 ;; procedure to implement the Simpson's integration algorithm.
 ;;
 ;; Author: Pierre C. Dussault
