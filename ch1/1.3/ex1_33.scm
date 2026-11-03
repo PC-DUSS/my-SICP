@@ -44,12 +44,12 @@
 
 
 (define (sum term a next b)
-  ;; This filter using a lambda will accept all 'a's.
+  ;; This filter will accept all 'a's.
   (filter-accumulate + 0 (lambda (x) #t) term a next b))
 
 
 (define (product factor a next b)
-  ;; This filter using a lambda will accept all 'a's.
+  ;; This filter will accept all 'a's.
   (filter-accumulate * 1 (lambda (x) #t) factor a next b))
 
 
