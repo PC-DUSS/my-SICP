@@ -1,3 +1,15 @@
+#!/usr/bin/guile -s
+!#
+;; Use the sum procedure, and you experience building the initial integral
+;; procedure to implement the Simpson's integration algorithm.
+;;
+;; Author: Pierre C. Dussault
+;; Date: 2026-11-02
+;;
+;; Copyright 2026 Pierre C. Dussault. See the LICENSE file for details.
+;;
+;; Code:
+
 ;; Generalize the concept of summation for any type of summation.
 (define (sum term a next b)
   (if (> a b)
@@ -60,9 +72,9 @@
 
 
 (define (main)
-  (display "sum-cubes = ") (display (sum-cubes 1 10)) (newline)
-  (display "sum-integers = ") (display (sum-integers 1 10)) (newline)
-  (display "pi-sum = ") (display (* 8 (pi-sum 1 750000))) (newline)
+  ;;(display "sum-cubes = ") (display (sum-cubes 1 10)) (newline)
+  ;;(display "sum-integers = ") (display (sum-integers 1 10)) (newline)
+  ;;(display "pi-sum = ") (display (* 8 (pi-sum 1 750000))) (newline)
   (display "integral(cube) = ") (display (integral cube 0 1 0.001)) (newline)
   (display "simpson(cube) = ") (display (simpson cube 0 1 2)) (newline)
   (display "simpson(cube) = ") (display (simpson cube 0 1 100)) (newline)
@@ -70,3 +82,5 @@
 
 
 (main)
+
+
