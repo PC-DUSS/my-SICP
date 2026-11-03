@@ -62,7 +62,10 @@
     (begin
       (display "(simpson f a b n): invalid n. n should be an even integer.\n")
       (exit 1)))
-  (define h (/ (- b a) (* n 1.0)))
+
+   ;; Scheme keeps division results as rational numbers. No need to convert
+   ;; integer division to floating point to avoid truncation errors.
+  (define h (/ (- b a) n))
   (define (term k)
     (* (f (+ a (* k h)))
        (if (or (= k 0) (= k n))
