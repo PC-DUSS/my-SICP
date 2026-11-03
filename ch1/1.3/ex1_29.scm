@@ -63,15 +63,19 @@
       (display "(simpson f a b n): invalid n. n should be an even integer.\n")
       (exit 1)))
 
-   ;; Scheme keeps division results as rational numbers. No need to convert
-   ;; integer division to floating point to avoid truncation errors.
+  ;; Scheme keeps division results as rational numbers. No need to convert
+  ;; integer division to floating point to avoid truncation errors.
   (define h (/ (- b a) n))
   (define (term k)
     (* (f (+ a (* k h)))
        (if (or (= k 0) (= k n))
            1
            (+ 2 (* 2 (remainder k 2))))))
-  (* (/ h 3.0) (sum term 0 inc n)))  ;; sum for k=0 up to n.
+  
+  ;; sum for k=0 up to n
+  (* (/ h 3.0) (sum term 0 inc n)))  ;; Here we actually do want the result as a
+                                     ;; floating point number, so do the
+                                     ;; conversion.
 
 
 (define (main)
