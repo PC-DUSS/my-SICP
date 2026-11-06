@@ -31,6 +31,27 @@
 (define (even? x) (= (remainder x 2) 0))
 
 
+(define (miller-rabin x)
+  (define (expmod base pow mod)
+    ;; expmod implementation specific to the Miller-Rabin test.
+    (cond ((= pow 0) 1)
+          ((even? pow)
+           (define sq-mod (remainder (square (expmod base (/ pow 2) mod)) mod))
+           (if (= sq-mod 1) 0 sq-mod))
+          (else (remainder (* base (expmod base (- pow 1) mod)) mod))))
+
+  (define (mrt-iter a n)
+    (cond ((> a (/ n 4)) #t)
+          ((= (expmod a (- n 1) n) 1) (mrt-iter (+ a 1) n))
+          (else #f)))
+
+  (mrt-iter 2 x))
+
+
+(define (prime? x)
+  (miller-rabin x))
+
+
 (define (filter-accumulate combiner null-value filter term a next b)
   (define (iter a result)
     (if (> a b)
@@ -40,6 +61,7 @@
           (iter (next a) (combiner (term a) result))
           ;; Skip this 'a' and move on to the next 'a'.
           (iter (next a) result))))
+
   (iter a null-value))
 
 
@@ -62,19 +84,22 @@
 
 
 (define (sum-primes-square a b)
-  (define (prime? x)
-    ;; TODO Use the Miller-Rabin test from a previous exercise.
-    #t
-    )
   (filter-accumulate + 0 prime? square a inc b))
 
 
 (define (product-coprimes n)
   (define (coprime? x)
-    ;; TODO Use a GCD procedure from a previous exercise, and return #t if the GCD
-    ;; between x and n is equal to 1.
-    #t
-    )
+    (define (gcd a b)
+      ;; Eucledian algorithm.
+      (if (= b 0)
+          a
+          (gcd b (remainder a b))))
+
+    ;; Return #t if the GCD between x and n is equal to 1.
+    (define a (max x n))
+    (define b (min x n))
+    (= 1 (gcd a b)))
+
   (filter-accumulate * 1 coprime? identity 1 inc n))
 
 
@@ -98,12 +123,10 @@
   (display "sum of squares of primes from [1-25] = ")
   (display (sum-primes-square 1 25))
   (newline)
-  
-  (display "product of positive integers that are coprime with 116, from [1-25] = ")
-  (display (product-coprimes 25))
+
+  (display "product of positive integers that are coprime with 20, from [1-20] = ")
+  (display (product-coprimes 20))
   (newline))
 
 
 (main)
-
-

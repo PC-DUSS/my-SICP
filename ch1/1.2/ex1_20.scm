@@ -2,6 +2,7 @@
 !#
 (define (main)
   (define (gcd a b)
+    ;; Eucledian algorithm.
     (if (= b 0)
         a
         (gcd b (remainder a b))))
