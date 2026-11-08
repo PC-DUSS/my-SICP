@@ -27,8 +27,10 @@
 (define (pi-sum a b)
   (define (pi-term x)
     (/ 1.0 (* x (+ x 2))))
+
   (define (pi-next x)
     (+ x 4))
+
   (sum pi-term a pi-next b))
 
 
@@ -38,8 +40,8 @@
   ;; and b using our sum procedure abstraction.
   (define (add-dx x)
     (+ dx x))
-  (* (sum f (+ a (/ dx 2.0)) add-dx b)
-     dx))
+
+  (* (sum f (+ a (/ dx 2.0)) add-dx b) dx))
 
 
 (define (simpson-integral f a b n)
@@ -57,13 +59,17 @@
   (define h (/ (- b a) (* n 1.0)))
   (define (k a)  ;; this procedure is a closure
     (+ (/ (- a start) h) 1))
+
   (define (f-adj a)
     (* (+ 2 (* 2 (remainder (k a) 2))) (f a))))
+
   (define (next a)
     (+ a h))
-  (* (/ h 3.0) (+ (f start)
-                  (sum f-adj (+ start h) next end)
-                  (f (+ a (* n h))))))
+
+  (* (/ h 3.0)
+     (+ (f start)
+        (sum f-adj (+ start h) next end)
+        (f (+ a (* n h))))))
 
 
 (define (main)
