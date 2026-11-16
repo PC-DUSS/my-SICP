@@ -1,6 +1,8 @@
 #!/usr/bin/guile -s
 !#
-;; TODO
+;; Use the 'cont-frac' procedure to calculate the continuous fraction where
+;; Ni = 1.0 and Di = number i from Euler's sequence. The result of this
+;; continuous fraction should be (e - 2), or approx. 0.718.
 ;;
 ;; Author: Pierre C. Dussault
 ;; Date: 2026-11-15
