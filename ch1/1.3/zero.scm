@@ -18,14 +18,17 @@
 ;; Copyright 2026 Pierre C. Dussault. See LICENSE file for details.
 ;;
 ;; Code:
-(define ERR-MARGIN 0.001)
+(define tolerance 0.0001)
 
 
 (define (average x y) (/ (+ x y) 2))
 
 
+(define (cube x) (* x x x))
+
+
 (define (close-enough? point1 point2)
-  (<= (abs (- point2 point1)) ERR-MARGIN))
+  (<= (abs (- point2 point1)) tolerance))
 
 
 (define (search f neg-point pos-point)
@@ -48,12 +51,34 @@
           (else (error "Values are not of opposite sign" a b)))))
 
 
+(define (example-find-pi-zero)
+  ;; Finding the zero of the sin function, between 2.0 radians and 4.0 radians
+  ;; should give us PI (think of the trigonometric unit circle). The sin
+  ;; function has two zeroes, one at 0 radians and the other at pi radians.
+  ;; Note: sin is a built-in function in the Scheme spec.
+  (display (half-interval-method sin 2.0 4.0))
+  (newline))
+
+
+(define (example-find-zero-of-equation)
+  ;; Find a zero for x^3 - 2x - 3, from x = 1 through x = 2.
+  ;; Let's use a lambda expression to pass this function to our
+  ;; half-interval-method procedure.
+  (display (half-interval-method (lambda (x) (- (cube x) (* 2 x) 3)) 1.0 2.0))
+  (newline))
+
+
+(define (is-main?)
+  (let ((filename "zero.scm") (loaded-file (car (command-line))))
+    (or (equal? filename loaded-file)
+        (equal? filename (string-append "./" loaded-file)))))
+
+
 (define (main)
-  (display (half-interval-method sin 2.0 4.0)) (newline)
+  (example-find-pi-zero)
+  (example-find-zero-of-equation)
   )
 
 
-(if (or (equal? (car (command-line)) "zero.scm")
-        (equal? (car (command-line)) "./zero.scm"))
-    (main))
+(if (is-main?) (main))
 
