@@ -1,8 +1,8 @@
 #!/usr/bin/guile -s
 !#
 ;; Write a procedure (tan-cf x k) that calculates tan(x) by using J.H. Lambert's
-;; method by way of a continuous fraction by computing up to the k'th term of
-;; the continuous fraction.
+;; method by way of a continuous fraction, computing up to the k'th term of the
+;; continuous fraction.
 ;;
 ;; This exercise gives us a hint at how we might generalize our 'cont-frac'
 ;; procedure.
@@ -54,7 +54,7 @@
 
 (define (main)
   (display "tan(pi/4) = ") (display (tan-cf (/ pi 4) 25)) (newline)
-  (display "tan(pi) = ") (display (tan-cf (- pi) 25)) (newline))
+  (display "tan(pi) = ") (display (tan-cf pi 25)) (newline))
 
 
 (if (is-main?) (main))
