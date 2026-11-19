@@ -1,6 +1,7 @@
 #!/usr/bin/guile -s
 !#
-;; Procedures as return values and their applications.
+;; Using procedures as return values and its applications. A.k.a., building
+;; abstractions with higher-order procedures.
 ;;
 ;; Author: Pierre C. Dussault
 ;; Date: 2026-11-18
@@ -55,6 +56,59 @@
   ;; Calculate square root using Newton's method.
   (newtons-method (lambda (y) (- (square y) x)) 1.0))
 
+(define (fixed-point-with-transform f transform guess)
+  ;; This is an abstraction of applying a transformation on a function in order
+  ;; to calculate one of its fixed-points, rather than simply re-applying the
+  ;; vanilla function on each new guess. We were doing this when we were passing
+  ;; an average-damped version of a function or a Newton's method transformation
+  ;; of our function to the 'fixed-point' procedure, rather than simply passing
+  ;; the function itself (because in some cases simply reapplying the function
+  ;; itself would never converge to a fixed-point).
+  (fixed-point (transform f) guess))
+
+(define (average-damp-sqrt-abstracted x)
+  ;; Use our latest 'fixed-point-with-transform' abstraction to compute square
+  ;; roots.
+  ;;
+  ;; f:
+  ;; The equation that represents the relationship between the square root
+  ;; and its square, but turn into a function for which to find a fixed-point.
+  ;;
+  ;; transform:
+  ;; The procedure used to transform the vanilla application of the
+  ;; square-root-equation-turned-into-function in order to help repeated
+  ;; applications of this function converge to a fixed-point. In this case we
+  ;; are using 'average-damp' to transform each application of the given
+  ;; function by averaging its output with its input.
+  ;;
+  ;; guess:
+  ;; The initial guess. Here we start with 1.0.
+  (fixed-point-with-transform (lambda (y) (/ x y)) average-damp 1.0))
+
+(define (newtons-method-sqrt-abstracted x)
+  ;; Use our latest 'fixed-point-with-transform' abstraction to compute square
+  ;; roots.
+  ;;
+  ;; f:
+  ;; The equation for which finding a zero allows us to find a fixed-point to
+  ;; the function which actually allows us to identify a square root (see
+  ;; Newton's method of finding square roots for more details).
+  ;;
+  ;; transform:
+  ;; The procedure used to transform the vanilla application of the
+  ;; square-root-equation-turned-into-function in order to help repeated
+  ;; applications of this function converge to a fixed-point. In this case we
+  ;; are using 'newtons-transform' to compute each iteration as a function of
+  ;; both the input and the output of the newton transformation (each successive
+  ;; try is a function of the input and the output of the Newton's
+  ;; transformation of the new guess, which is itself based on the output and
+  ;; the input of the Newton transform of the previous guess, unless the
+  ;; previous guess was the initial guess).
+  ;;
+  ;; guess:
+  ;; The initial guess. Here we start with 1.0.
+  (fixed-point-with-transform (lambda (y) (- (square y) x)) newton-transform 1.0))
+
 (define (main)
   (letrec ((x 25)
            (msg (string-append "Square root of "
@@ -82,6 +136,21 @@
                                (number->string x)
                                " = "
                                (number->string (newton-sqrt x))
+                               "\n")))
+    (display msg))
+  (letrec ((x 144)
+           (msg (string-append "Abstracted average-damping square root of "
+                               (number->string x)
+                               " = "
+                               (number->string (average-damp-sqrt-abstracted x))
+                               "\n")))
+    (display msg))
+  (letrec ((x 121)
+           (msg (string-append "Abstracted Newton's method square root of "
+                               (number->string x)
+                               " = "
+                               (number->string
+                                (newtons-method-sqrt-abstracted x))
                                "\n")))
     (display msg))
   (exit 0))

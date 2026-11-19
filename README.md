@@ -2,4 +2,5 @@
 Contents of me working through The Structure and Interpretation of Computer
 Programs.
 
-### WIP
+### Current Progress:
+p.102
