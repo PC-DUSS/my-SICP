@@ -2,7 +2,7 @@
 ;; f(x + dx), where dx is a tiny value of delta-x. The procedure takes as input
 ;; a procedure that computes f and returns a procedure that computes smoothed f.
 ;; Also, since it is sometimes valuable to repeatedly smooth a function (smooth
-;; the smoothed function, and so on), write a procedure that returns an a
+;; the smoothed function, and so on), write a procedure that returns a
 ;; procedure that computes the n-fold smoothed function f. Use 'repeated' from
 ;; the previous exercise.
 ;;
