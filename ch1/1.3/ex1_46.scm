@@ -38,92 +38,43 @@
             (iter (square b) (/ (- n 1) 2) (* b adj-factor)))))
   (iter b n 1.0))
 
-(define (fixed-point f)
-  (define tolerance 0.00001)
-  (define (find-fixed-point f guess)
-    (let ((next (f guess)))
-      (if (< (abs (- next guess)) tolerance)
+(define (iterative-improve good-enough? improve-guess)
+  (define (try guess)
+    (let ((next (improve-guess guess)))
+      (if (good-enough? guess next)
           next
-          (find-fixed-point f next))))
-  (find-fixed-point f 1.0))
+          (try next))))
+  try)
+
+(define (fixed-point f)
+  (let ((tolerance 0.00001))
+    ((iterative-improve (lambda (guess next) (< (abs (- next guess)) tolerance))
+                       (lambda (guess) (f guess))) 1.0)))
 
 (define (average-damp f)
   (lambda (x) (average x (f x))))
 
 (define (sqrt x)
+  (let ((tolerance 0.00001)
+        (newtons-transform (lambda (y) (/ x y))))
+    ((iterative-improve (lambda (guess next) (< (abs (- next guess)) tolerance))
+                        (lambda (guess) ((average-damp newtons-transform) guess)))
+     1.0)))
+
+(define (simplified-sqrt x)
+  ;; Here we could also just use our new version of 'fixed-point', instead of
+  ;; rewriting the whole expression in terms of 'iterative-improve'.
   (fixed-point (average-damp (lambda (y) (/ x y)))))
 
-(define (double f)
-  (lambda (x) (f (f x))))
-
-(define (compose f g)
-  (lambda (x) (f (g x))))
-
-(define (repeated f n)
-  (if (= n 1)
-      (lambda (x) (f x))
-      (lambda (x) ((compose (repeated f (- n 1)) f) x))))
-
-(define (smooth f)
-  (define (3-avg y1 y2 y3)
-    (/ (+ y1 y2 y3) 3))
-  (lambda (x) (3-avg (f (- x dx))
-                     (f x)
-                     (f (+ x dx)))))
-
-(define (n-smooth f n)
-  ((repeated smooth n) f))
-
-(define (fourth-root x)
-  (fixed-point ((double average-damp) (lambda (y) (/ x (pow y 3))))))
-
-(define (fifth-root x)
-  (fixed-point ((repeated average-damp 2) (lambda (y) (/ x (pow y 4))))))
-
-(define (sixth-root x)
-  (fixed-point ((repeated average-damp 2) (lambda (y) (/ x (pow y 5))))))
-
-(define (seventh-root x)
-  (fixed-point ((repeated average-damp 2) (lambda (y) (/ x (pow y 6))))))
-
-(define (eighth-root x)
-  (fixed-point ((repeated average-damp 3) (lambda (y) (/ x (pow y 7))))))
-
-(define (fifteenth-root x)
-  ;; This should work
-  (fixed-point ((repeated average-damp 3) (lambda (y) (/ x (pow y 14))))))
-
-(define (sixteenth-root x)
-  ;; But then here we would need to increment by one the number of times average-damp is applied.
-  (fixed-point ((repeated average-damp 4) (lambda (y) (/ x (pow y 15))))))
-
-(define (fail-sixteenth-root x)
-  ;; This should fail. Hint: it fails as expected!
-  (fixed-point ((repeated average-damp 3) (lambda (y) (/ x (pow y 15))))))
-
-(define (log-b base x)
-  ;; This is the logarithm change of base formula.
-  (/ (log x) (log base)))
-
-(define (nth-root n x)
-  ;; Is it log2(n-of-root)? Yes!
-  (let ((num-repeats (floor (log-b 2 n))))
-    (fixed-point ((repeated average-damp num-repeats)
-                  (lambda (y) (/ x (pow y (- n 1))))))))
-
 (define (is-main?)
-  (let ((filename "ex1_45.scm")
+  (let ((filename "ex1_46.scm")
         (cli-first-arg (car (command-line))))
     (or (equal? cli-first-arg filename)
         (equal? cli-first-arg (string-append "./" filename)))))
 
 (define (main)
-  (display (fifteenth-root 32768)) (newline)
-  (display (sixteenth-root 65536)) (newline)
-  ;;(display (fail-sixteenth-root 65536)) (newline)  ;; this fails.
-  (display (nth-root 16 65536)) (newline)
-  (display (nth-root 7 2187)) (newline)
-  (display (nth-root 32 4294967296)) (newline)
+  (display (sqrt 625)) (newline)
+  (display (simplified-sqrt 625)) (newline)
   (exit 0))
 
 (if (is-main?) (main))
