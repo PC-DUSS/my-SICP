@@ -3,4 +3,4 @@ Contents of me working through The Structure and Interpretation of Computer
 Programs.
 
 ### Current Progress:
-p.105 ex1.45
+Ch2, p.107
