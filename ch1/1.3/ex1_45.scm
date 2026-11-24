@@ -39,7 +39,6 @@
   (iter b n 1.0))
 
 (define (fixed-point f)
-  ;; FIXME
   (define tolerance 0.00001)
   (define (find-fixed-point f guess)
     (let ((next (f guess)))
